@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Özgün İfade Alanı — Nazlıhan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-bone: #F4F1ED;
+    --text-dark: #2A2826;
+    --clay: #B86B52;
+    --clay-light: #C98068;
+    --sage: #8A927C;
+    --sage-light: #A3AA96;
+    --sand: #DBCBBD;
+    --sand-light: #E8DDD3;
+    --font-art: 'Cormorant Garamond', serif;
+    --font-sans: 'Outfit', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+  body {
+    background: #F5E66B;
+    background-image: url('bg-sunburst.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: var(--text-dark);
+    font-family: var(--font-sans);
+    line-height: 1.7;
+    overflow-x: hidden;
+    font-weight: 300;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+  }
+  ::selection { background: rgba(245,220,100,0.5); color: var(--text-dark); }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 1.5rem 5vw;
+    display: flex; justify-content: space-between; align-items: center;
+    transition: all 0.4s ease;
+  }
+  nav.scrolled {
+    background: rgba(255,255,240,0.88);
+    backdrop-filter: blur(10px);
+    padding: 1rem 5vw;
+  }
+  .nav-brand { text-decoration: none; display: flex; flex-direction: column; gap: 0.1rem; }
+  .nav-brand-name {
+    font-family: var(--font-art); font-size: 2rem; font-weight: 600;
+    color: var(--text-dark); line-height: 1; letter-spacing: 0.5px;
+  }
+  .nav-brand-sub {
+    font-family: var(--font-sans); font-size: 0.55rem; font-weight: 400;
+    letter-spacing: 0.28em; text-transform: uppercase; color: var(--sage);
+  }
+  .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+  .nav-links a {
+    text-decoration: none; color: var(--text-dark); font-weight: 400;
+    font-size: 0.88rem; letter-spacing: 0.04em; transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--clay); }
+  .hamburger {
+    display: none; background: none; border: none; cursor: pointer;
+    padding: 4px; flex-direction: column; gap: 5px;
+  }
+  .hamburger span { display: block; width: 22px; height: 1.5px; background: var(--text-dark); transition: all 0.3s; }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-block; background: transparent; color: var(--text-dark);
+    padding: 0.9rem 2.2rem; font-family: var(--font-sans); font-size: 0.88rem;
+    font-weight: 400; text-decoration: none; border-radius: 50px;
+    border: 1px solid var(--text-dark); transition: all 0.4s ease;
+    cursor: pointer; letter-spacing: 0.04em;
+  }
+  .btn:hover { background: var(--clay); border-color: var(--clay); color: var(--bg-bone); }
+  .btn-fill { background: var(--text-dark); color: var(--bg-bone); border-color: var(--text-dark); }
+  .btn-fill:hover { background: var(--clay); border-color: var(--clay); }
+  .btn-light { border-color: rgba(244,241,237,0.4); color: var(--bg-bone); }
+  .btn-light:hover { background: var(--clay); border-color: var(--clay); color: var(--bg-bone); }
+  .btn-light-fill { background: #FFFFF0; color: var(--text-dark); border-color: #FFFFF0; }
+  .btn-light-fill:hover { background: var(--clay); border-color: var(--clay); color: var(--bg-bone); }
+
+  /* BG ILLUST */
+  .bg-illust { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+  .bg-illust svg { position: absolute; width: 100%; height: 100%; }
+
+  @keyframes drift { 0%,100%{transform:translateX(0) translateY(0)} 50%{transform:translateX(8px) translateY(-5px)} }
+  @keyframes sway { 0%,100%{transform:rotate(0deg)} 50%{transform:rotate(1.5deg)} }
+  @keyframes pulse { 0%,100%{opacity:0.15} 50%{opacity:0.35} }
+  @keyframes expand { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+  @keyframes riseFloat { 0%{transform:translateY(0) scale(1);opacity:0.12} 50%{transform:translateY(-15px) scale(1.1);opacity:0.2} 100%{transform:translateY(0) scale(1);opacity:0.12} }
+
+  /* HERO */
+  .hero {
+    min-height: auto; padding: 10rem 5vw 4rem;
+    position: relative; overflow: hidden;
+    background: rgba(255,255,240,0.65);
+  }
+  .hero-content { max-width: 700px; position: relative; z-index: 2; }
+  .hero h1 {
+    font-family: var(--font-art); font-size: clamp(2.4rem,5.5vw,4.2rem);
+    font-weight: 300; line-height: 1.08; margin-bottom: 1.8rem;
+    color: var(--text-dark); opacity: 0; animation: fadeUp 0.8s ease forwards 0.3s;
+  }
+  .hero h1 i { color: var(--clay); font-style: italic; font-weight: 400; }
+  .hero-desc { opacity: 0; animation: fadeUp 0.8s ease forwards 0.5s; }
+  .hero-sub {
+    font-size: clamp(1rem,1.6vw,1.1rem); font-weight: 300; line-height: 1.75;
+    margin-bottom: 0.8rem; max-width: 560px;
+    border-left: 1px solid var(--clay); padding-left: 1.8rem;
+  }
+  .hero-sub-visual {
+    display: flex; align-items: center; gap: 1rem;
+    padding-left: 1.8rem; max-width: 600px;
+  }
+  .hero-sub-visual p {
+    font-size: 0.88rem; color: rgba(42,40,38,0.55); line-height: 1.6;
+  }
+  .hero-sub-icons {
+    display: flex; gap: 0.6rem; flex-shrink: 0;
+  }
+  .hero-sub-icons .hsi {
+    width: 38px; height: 38px;
+    border: 1px solid var(--sand);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hero-sub-icons .hsi svg { width: 18px; height: 18px; }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+  /* HERO CTA */
+  .hero-cta {
+    background: var(--text-dark); padding: 2.5rem 5vw;
+    display: flex; gap: 1rem; flex-wrap: wrap; position: relative; z-index: 2;
+  }
+  .hero-cta .btn { opacity: 0; animation: fadeUp 0.6s ease forwards 0.9s; }
+  .hero-cta .btn:nth-child(2) { animation-delay: 1s; }
+
+  /* SHARED */
+  .section-tag {
+    font-family: var(--font-sans); font-size: 0.68rem; font-weight: 500;
+    letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 1.2rem;
+  }
+  .section-title {
+    font-family: var(--font-art); font-weight: 300; line-height: 1.1; margin-bottom: 2rem;
+  }
+  .section-title em,.section-title i { font-style: italic; font-weight: 400; }
+
+  /* YAKLAŞIM */
+  .approach { padding: 5rem 5vw; position: relative; overflow: hidden; background: rgba(255,255,240,0.6); }
+  .approach .section-tag { color: var(--sage); text-align: center; }
+  .approach .section-title { font-size: clamp(2rem,4vw,3rem); text-align: center; margin-bottom: 1.5rem; }
+  .approach-intro { max-width: 660px; margin: 0 auto 2.5rem; text-align: center; }
+  .approach-intro p { font-size: 0.93rem; line-height: 1.85; color: rgba(42,40,38,0.72); margin-bottom: 1.2rem; }
+  .approach-intro p:last-child { margin-bottom: 0; }
+  .approach-closing {
+    font-family: var(--font-art); font-size: 1.08rem; font-style: italic;
+    color: var(--clay); margin-top: 0.3rem;
+  }
+
+  .odalar-title {
+    font-family: var(--font-art); font-size: clamp(1.8rem,3.5vw,2.5rem);
+    font-weight: 300; font-style: italic; text-align: center;
+    margin-bottom: 2rem; color: var(--text-dark);
+  }
+
+  .grid-3 {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem;
+    position: relative; z-index: 2; max-width: 960px; margin: 0 auto;
+  }
+  .approach-card {
+    background: rgba(255,255,255,0.4); border: 1px solid rgba(219,203,189,0.5);
+    border-radius: 120px 120px 18px 18px; overflow: hidden;
+    transition: all 0.4s ease; text-align: center;
+  }
+  .approach-card:hover {
+    border-color: var(--clay); transform: translateY(-5px);
+    box-shadow: 0 14px 40px rgba(42,40,38,0.05);
+  }
+  .approach-illust {
+    width: 100%; aspect-ratio: 1/0.85;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .approach-illust svg { width: 55%; height: 55%; }
+  .approach-card-body { padding: 1.2rem 1.5rem 1.8rem; }
+  .approach-card-body span {
+    font-family: var(--font-art); font-size: 0.9rem; color: var(--sage);
+    font-style: italic; display: block; margin-bottom: 0.3rem;
+  }
+  .approach-card-body h3 {
+    font-family: var(--font-art); font-size: 1.4rem; font-weight: 400;
+    margin-bottom: 0.5rem; color: var(--text-dark);
+  }
+  .approach-card-body p { font-size: 0.84rem; color: rgba(42,40,38,0.6); line-height: 1.65; }
+
+  /* KIMLER ICIN */
+  .for-who { padding: 5rem 5vw; background: rgba(245,220,100,0.35); position: relative; overflow: hidden; }
+  .for-who .section-tag { color: var(--clay); text-align: center; }
+  .for-who .section-title { font-size: clamp(2rem,4vw,3rem); text-align: center; }
+  .for-who-intro {
+    font-size: 0.95rem; text-align: center; max-width: 600px;
+    margin: 0 auto 2.5rem; color: rgba(42,40,38,0.7);
+  }
+  .for-who-list {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0.8rem 2rem; max-width: 780px; margin: 0 auto;
+    position: relative; z-index: 2;
+  }
+  .fw-item {
+    display: flex; gap: 0.8rem; align-items: flex-start;
+    padding: 1rem 1.2rem;
+    border: 1px solid rgba(42,40,38,0.06);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.45);
+    transition: all 0.3s ease;
+  }
+  .fw-item:hover {
+    background: rgba(255,255,255,0.8);
+    border-color: var(--clay);
+    transform: translateY(-2px);
+  }
+  .fw-dot {
+    flex-shrink: 0; width: 7px; height: 7px;
+    border-radius: 50%; background: var(--clay); margin-top: 0.4rem;
+  }
+  .fw-item p { font-size: 0.88rem; line-height: 1.6; color: var(--text-dark); }
+  .for-who-disclaimer {
+    text-align: center; margin-top: 3rem;
+    font-family: var(--font-art); font-size: 1rem; color: rgba(42,40,38,0.55);
+    font-style: italic; max-width: 540px; margin-left: auto; margin-right: auto;
+    padding: 1.2rem 1.5rem;
+    border-top: 1px solid rgba(42,40,38,0.1);
+  }
+
+  /* VIDEO */
+  .mini-video { max-width: 780px; margin: 3.5rem auto 0; position: relative; z-index: 2; }
+  .mini-video-header { margin-bottom: 1rem; }
+  .mini-video-header h3 {
+    font-family: var(--font-art); font-size: 1.5rem; font-weight: 400;
+    color: var(--text-dark); margin-bottom: 0.2rem;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .mini-video-header span {
+    font-size: 0.75rem; letter-spacing: 0.08em;
+    color: var(--clay); font-weight: 500;
+  }
+  .video-wrap {
+    border-radius: 14px; overflow: hidden; aspect-ratio: 16/9;
+    background: var(--text-dark); box-shadow: 0 12px 40px rgba(42,40,38,0.1);
+  }
+  .video-wrap iframe { width: 100%; height: 100%; border: none; display: block; }
+
+  /* HAKKIMDA */
+  .about { padding: 5rem 5vw; background: var(--text-dark); color: var(--bg-bone); position: relative; overflow: hidden; }
+  .about-inner {
+    display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 3.5rem;
+    align-items: center; max-width: 880px; margin: 0 auto; position: relative; z-index: 2;
+  }
+  .about-illust-frame {
+    width: 100%; aspect-ratio: 3/4;
+    border-radius: 140px 140px 70px 70px;
+    background: linear-gradient(160deg, rgba(138,146,124,0.15) 0%, rgba(184,107,82,0.1) 100%);
+    position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .about-illust-frame svg { width: 70%; height: auto; opacity: 0.5; }
+  .about .section-tag { color: var(--sage-light); }
+  .about-text h2 {
+    font-family: var(--font-art); font-size: clamp(2rem,3.5vw,2.8rem);
+    font-weight: 300; color: var(--bg-bone); line-height: 1.1; margin-bottom: 1.2rem;
+  }
+  .about-text h2 i { color: var(--clay-light); font-weight: 400; }
+  .about-text p { font-size: 0.93rem; line-height: 1.85; color: rgba(244,241,237,0.78); margin-bottom: 1rem; }
+  .about-closing {
+    font-family: var(--font-art); font-size: 1.1rem; font-style: italic;
+    font-weight: 300; color: var(--clay-light); margin-top: 1.2rem;
+  }
+
+  /* CALISMALAR */
+  .work { padding: 5rem 5vw; position: relative; overflow: hidden; background: rgba(255,255,240,0.6); }
+  .work .section-tag { color: var(--sage); text-align: center; }
+  .work .section-title { font-size: clamp(2rem,4vw,2.6rem); text-align: center; }
+  .work-grid {
+    display: grid; grid-template-columns: repeat(4,1fr); gap: 1.3rem;
+    max-width: 960px; margin: 0 auto; position: relative; z-index: 2;
+  }
+  .work-card {
+    border: 1px solid var(--sand); border-radius: 14px; padding: 2rem 1.5rem;
+    position: relative; overflow: hidden; transition: all 0.4s ease;
+    display: flex; flex-direction: column; min-height: 240px;
+  }
+  .work-card:hover {
+    border-color: var(--clay); transform: translateY(-4px);
+    box-shadow: 0 14px 40px rgba(42,40,38,0.05);
+  }
+  .work-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+  .work-card:nth-child(1)::before { background: var(--text-dark); }
+  .work-card:nth-child(2)::before { background: var(--clay); }
+  .work-card:nth-child(3)::before { background: var(--sage); }
+  .work-card:nth-child(4)::before { background: var(--sand); }
+  .work-num {
+    font-family: var(--font-art); font-size: 2.2rem; color: rgba(42,40,38,0.05);
+    position: absolute; top: 0.6rem; right: 1rem; line-height: 1; font-weight: 600;
+  }
+  .work-card h3 { font-family: var(--font-art); font-size: 1.2rem; font-weight: 400; color: var(--text-dark); margin-bottom: 0.6rem; }
+  .work-card p { font-size: 0.84rem; color: rgba(42,40,38,0.55); line-height: 1.65; margin-bottom: 0.6rem; flex-grow: 1; }
+  .work-tag {
+    display: inline-block; font-size: 0.65rem; font-weight: 500; letter-spacing: 0.04em;
+    padding: 0.3rem 0.8rem; border-radius: 50px; border: 1px solid var(--sand);
+    color: var(--sage); margin-top: auto; align-self: flex-start;
+  }
+
+  /* ILETISIM */
+  .contact { padding: 5rem 5vw; background: rgba(255,255,240,0.75); text-align: center; }
+  .contact-inner { max-width: 460px; margin: 0 auto; }
+  .contact .section-tag { color: var(--clay); }
+  .contact .section-title { font-size: clamp(2rem,4vw,2.6rem); margin-bottom: 1rem; }
+  .contact-text { font-size: 0.92rem; color: rgba(42,40,38,0.6); margin-bottom: 2rem; }
+  .contact-form { text-align: left; }
+  .form-group { margin-bottom: 1.1rem; }
+  .form-group label {
+    display: block; font-size: 0.7rem; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: rgba(42,40,38,0.45); margin-bottom: 0.35rem;
+  }
+  .form-group input, .form-group textarea {
+    width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--sand);
+    border-radius: 10px; background: rgba(255,255,255,0.7); font-family: var(--font-sans);
+    font-size: 0.9rem; color: var(--text-dark); transition: border-color 0.3s; outline: none;
+  }
+  .form-group input:focus, .form-group textarea:focus { border-color: var(--clay); }
+  .form-group textarea { resize: vertical; min-height: 100px; }
+  .form-submit { text-align: center; margin-top: 1.5rem; }
+  .form-submit .btn { width: 100%; padding: 0.9rem; }
+
+  /* FOOTER */
+  footer {
+    padding: 2rem 5vw; text-align: center; background: var(--text-dark);
+    color: rgba(219,203,189,0.45); font-size: 0.78rem; letter-spacing: 0.5px;
+  }
+  .footer-brand { font-family: var(--font-art); font-size: 0.95rem; color: var(--sand); display: block; margin-bottom: 0.3rem; font-weight: 400; }
+
+  /* REVEAL */
+  .reveal { opacity: 0; transform: translateY(18px); transition: all 0.9s ease-out; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 1.2rem 1.5rem; }
+    nav.scrolled { padding: 0.8rem 1.5rem; }
+    .nav-links {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255,255,240,0.97); backdrop-filter: blur(16px);
+      flex-direction: column; justify-content: center; align-items: center; gap: 2rem;
+    }
+    .nav-links.open { display: flex; }
+    .nav-links a { font-size: 1.1rem; }
+    .hamburger { display: flex; z-index: 200; }
+    .hero { padding: 7rem 1.5rem 3rem; }
+    .hero-cta { padding: 2rem 1.5rem; }
+    .approach,.for-who,.about,.work,.contact { padding: 3.5rem 1.5rem; }
+    .grid-3 { grid-template-columns: 1fr; max-width: 320px; margin-left: auto; margin-right: auto; }
+    .for-who-list { grid-template-columns: 1fr; }
+    .about-inner { grid-template-columns: 1fr; gap: 2rem; }
+    .about-visual { max-width: 240px; margin: 0 auto; }
+    .work-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 600px) {
+    .nav-brand-name { font-size: 1.5rem; }
+    .hero h1 { font-size: 2.2rem; }
+    .hero-sub,.hero-sub-visual { padding-left: 1.2rem; }
+    .hero-cta { flex-direction: column; }
+    .hero-cta .btn { text-align: center; }
+    .hero-sub-icons { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-brand">
+    <span class="nav-brand-name">Özgün İfade Alanı</span>
+    <span class="nav-brand-sub">Beden · Oyun · İfade</span>
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#yaklasim" onclick="closeNav()">Yaklaşım</a></li>
+    <li><a href="#kimler" onclick="closeNav()">Kimler İçin</a></li>
+    <li><a href="#hakkimda" onclick="closeNav()">Hakkımda</a></li>
+    <li><a href="#calismalar" onclick="closeNav()">Alanlar</a></li>
+    <li><a href="#iletisim" onclick="closeNav()">İletişim</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menü">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="bg-illust">
+    <svg viewBox="0 0 1440 700" fill="none" preserveAspectRatio="xMidYMid slice">
+      <g style="animation: drift 14s ease-in-out infinite;" opacity="0.1">
+        <path d="M1050 80 C1070 150,1040 240,1060 330 C1080 420,1050 500,1070 580" stroke="var(--text-dark)" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M1060 190 C1120 170,1170 180,1210 210" stroke="var(--text-dark)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M1060 190 C1000 170,950 180,910 210" stroke="var(--text-dark)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M1060 270 C1100 265,1140 275,1160 288" stroke="var(--sage)" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
+        <path d="M1060 270 C1020 265,980 275,960 288" stroke="var(--sage)" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
+      </g>
+      <circle cx="1060" cy="250" r="35" stroke="var(--sand)" stroke-width="0.8" fill="none" opacity="0.12">
+        <animate attributeName="r" dur="5s" repeatCount="indefinite" values="35;48;35"/>
+        <animate attributeName="opacity" dur="5s" repeatCount="indefinite" values="0.12;0.04;0.12"/>
+      </circle>
+    </svg>
+  </div>
+
+  <div class="hero-content">
+    <h1>Bedenin, İfadeyi<br><i>Özgür Bıraktığı</i> Alan</h1>
+    <div class="hero-desc">
+      <p class="hero-sub">İçsel sesin, zihinsel berraklığın ve bedensel canlılığın ile temas için.</p>
+      <div class="hero-sub-visual">
+        <p>Bireysel buluşmalar, canlı ve online alanlar.</p>
+        <div class="hero-sub-icons">
+          <!-- Person icon -->
+          <div class="hsi">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--clay)" stroke-width="1.5" stroke-linecap="round">
+              <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7"/>
+            </svg>
+          </div>
+          <!-- Group icon -->
+          <div class="hsi">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="1.5" stroke-linecap="round">
+              <circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="2.5"/>
+              <path d="M2 20c0-3.5 3.5-6 7-6 1.5 0 3 .4 4 1.2"/><path d="M14 20c0-2.5 2-4.5 5-4.5"/>
+            </svg>
+          </div>
+          <!-- Online icon -->
+          <div class="hsi">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-dark)" stroke-width="1.5" stroke-linecap="round">
+              <rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/><path d="M12 16v4"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HERO CTA -->
+<div class="hero-cta">
+  <a href="#calismalar" class="btn btn-light-fill">Alanları Keşfet</a>
+  <a href="#iletisim" class="btn btn-light">Bana Ulaş</a>
+</div>
+
+<!-- YAKLAŞIM -->
+<section class="approach" id="yaklasim">
+  <div class="bg-illust">
+    <svg viewBox="0 0 1440 600" fill="none" preserveAspectRatio="xMidYMid slice">
+      <path d="M0 300 C200 260,400 340,600 300 C800 260,1000 340,1200 300 C1300 280,1400 320,1440 300"
+        stroke="var(--sand)" stroke-width="0.8" fill="none" opacity="0.25" style="animation: sway 15s ease-in-out infinite;"/>
+    </svg>
+  </div>
+
+  <p class="section-tag reveal">Yaklaşım</p>
+  <h2 class="section-title reveal"><i>İfadenin Yönü</i></h2>
+
+  <div class="approach-intro reveal">
+    <p>İfade, yalnızca bir anlatım süreci değildir; varoluşla ilgilidir. Bedende başlar ve hayata taşınır. İfadenin hayata geçişi, sinir sisteminin güven ve temas kapasitesiyle doğrudan ilişkilidir. Sinir sistemi kendini güvende hissettiği ölçüde ifade açılır, kapanır, kısılır, değişir, çoğalır ya da dönüşür.</p>
+    <p>Sosyal dinamikler içinde uyumlanırken kişinin özgün yönüyle teması zaman zaman kesintiye uğrayabilir. Bu kopuş, yaşamla kurulan ilişkiyi ve yön duygusunu zayıflatabilir; bedensel, ruhsal ve zihinsel tekrar eden huzursuzluklar olarak kendini gösterebilir.</p>
+    <p>Bu nedenle ifadeyi "özgünlük" niteliğinde ele alıyorum. Özgün ifadenin hayatta yer bulabilmesi için bedeni, oyunu ve deneyimi sürecin merkezinde tutarak.</p>
+    <p class="approach-closing">Terapi uygulamıyorum. Alan açıyorum.</p>
+  </div>
+
+  <h3 class="odalar-title reveal">Odalar</h3>
+
+  <div class="grid-3">
+    <!-- Beden -->
+    <div class="approach-card reveal">
+      <div class="approach-illust">
+        <svg viewBox="0 0 200 200" fill="none">
+          <path d="M100 25 C97 55,88 85,92 115 C96 145,106 165,100 190" stroke="var(--text-dark)" stroke-width="2" stroke-linecap="round" opacity="0.5">
+            <animate attributeName="d" dur="7s" repeatCount="indefinite" values="M100 25 C97 55,88 85,92 115 C96 145,106 165,100 190;M100 25 C103 55,112 85,108 115 C104 145,94 165,100 190;M100 25 C97 55,88 85,92 115 C96 145,106 165,100 190"/>
+          </path>
+          <path d="M100 68 C118 63,140 68,155 78" stroke="var(--sage)" stroke-width="0.9" stroke-linecap="round" opacity="0.35"/>
+          <path d="M100 68 C82 63,60 68,45 78" stroke="var(--sage)" stroke-width="0.9" stroke-linecap="round" opacity="0.35"/>
+          <path d="M100 98 C115 95,135 100,148 108" stroke="var(--sage)" stroke-width="0.7" stroke-linecap="round" opacity="0.25"/>
+          <path d="M100 98 C85 95,65 100,52 108" stroke="var(--sage)" stroke-width="0.7" stroke-linecap="round" opacity="0.25"/>
+          <circle cx="100" cy="50" r="5" fill="var(--sage)" opacity="0.08"><animate attributeName="r" dur="3.5s" repeatCount="indefinite" values="5;8;5"/></circle>
+          <circle cx="100" cy="115" r="4" fill="var(--clay)" opacity="0.06"><animate attributeName="r" dur="4s" repeatCount="indefinite" values="4;7;4"/></circle>
+        </svg>
+      </div>
+      <div class="approach-card-body">
+        <span>01.</span>
+        <h3>Beden</h3>
+        <p>İfade kapasitesinin sinir sistemi ve duyusal zemini.</p>
+      </div>
+    </div>
+    <!-- Oyun -->
+    <div class="approach-card reveal">
+      <div class="approach-illust">
+        <svg viewBox="0 0 200 200" fill="none">
+          <circle cx="72" cy="95" r="26" stroke="var(--text-dark)" stroke-width="1.2" fill="none" opacity="0.25"><animate attributeName="cy" dur="4s" repeatCount="indefinite" values="95;82;95"/></circle>
+          <circle cx="130" cy="88" r="20" stroke="var(--clay)" stroke-width="1.2" fill="none" opacity="0.25"><animate attributeName="cy" dur="3.5s" repeatCount="indefinite" values="88;100;88"/></circle>
+          <circle cx="100" cy="125" r="15" stroke="var(--sage)" stroke-width="1" fill="none" opacity="0.2"><animate attributeName="cy" dur="3s" repeatCount="indefinite" values="125;115;125"/></circle>
+          <path d="M88 82 C98 76,112 80,118 86" stroke="var(--sand)" stroke-width="0.7" fill="none" stroke-dasharray="3 4" opacity="0.35"><animate attributeName="stroke-dashoffset" dur="3s" repeatCount="indefinite" values="0;7"/></path>
+          <circle cx="58" cy="60" r="2.5" fill="var(--clay)" opacity="0.12"><animate attributeName="r" dur="2s" repeatCount="indefinite" values="2.5;4;2.5"/></circle>
+          <circle cx="148" cy="62" r="2" fill="var(--sage)" opacity="0.12"><animate attributeName="r" dur="2.3s" repeatCount="indefinite" values="2;3.5;2"/></circle>
+        </svg>
+      </div>
+      <div class="approach-card-body">
+        <span>02.</span>
+        <h3>Oyun</h3>
+        <p>Yumuşama ve keşif için spontane alan.</p>
+      </div>
+    </div>
+    <!-- İfade -->
+    <div class="approach-card reveal">
+      <div class="approach-illust">
+        <svg viewBox="0 0 200 200" fill="none">
+          <ellipse cx="100" cy="100" rx="18" ry="18" stroke="var(--text-dark)" stroke-width="1.3" fill="none" opacity="0.4">
+            <animate attributeName="rx" dur="4.5s" repeatCount="indefinite" values="18;28;18"/><animate attributeName="ry" dur="4.5s" repeatCount="indefinite" values="18;22;18"/><animate attributeName="opacity" dur="4.5s" repeatCount="indefinite" values="0.4;0.1;0.4"/>
+          </ellipse>
+          <ellipse cx="100" cy="100" rx="38" ry="32" stroke="var(--clay)" stroke-width="0.9" fill="none" opacity="0.25">
+            <animate attributeName="rx" dur="4.5s" repeatCount="indefinite" values="38;52;38"/><animate attributeName="ry" dur="4.5s" repeatCount="indefinite" values="32;42;32"/><animate attributeName="opacity" dur="4.5s" repeatCount="indefinite" values="0.25;0.05;0.25"/>
+          </ellipse>
+          <ellipse cx="100" cy="100" rx="58" ry="48" stroke="var(--sage)" stroke-width="0.6" fill="none" opacity="0.15">
+            <animate attributeName="rx" dur="4.5s" repeatCount="indefinite" values="58;75;58"/><animate attributeName="ry" dur="4.5s" repeatCount="indefinite" values="48;60;48"/><animate attributeName="opacity" dur="4.5s" repeatCount="indefinite" values="0.15;0.02;0.15"/>
+          </ellipse>
+          <circle cx="100" cy="100" r="6" fill="var(--clay)" opacity="0.08"><animate attributeName="r" dur="4.5s" repeatCount="indefinite" values="6;9;6"/></circle>
+          <circle cx="100" cy="100" r="2.5" fill="var(--text-dark)" opacity="0.25"/>
+        </svg>
+      </div>
+      <div class="approach-card-body">
+        <span>03.</span>
+        <h3>İfade</h3>
+        <p>İçsel deneyimin dış dünyada varoluşu.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KIMLER ICIN -->
+<section class="for-who" id="kimler">
+  <!-- Dynamic background illustrations -->
+  <div class="bg-illust">
+    <svg viewBox="0 0 1440 800" fill="none" preserveAspectRatio="xMidYMid slice">
+      <!-- Rising figures / liberation shapes -->
+      <g opacity="0.06">
+        <!-- Figure 1 - reaching up -->
+        <path d="M200 700 C200 650,190 580,200 520 C210 460,195 400,205 350" stroke="var(--clay)" stroke-width="2" stroke-linecap="round" style="animation: riseFloat 8s ease-in-out infinite;"/>
+        <path d="M205 420 C230 400,260 410,280 430" stroke="var(--clay)" stroke-width="1.2" stroke-linecap="round" style="animation: riseFloat 8s ease-in-out infinite;"/>
+        <path d="M205 420 C180 400,150 410,130 430" stroke="var(--clay)" stroke-width="1.2" stroke-linecap="round" style="animation: riseFloat 8s ease-in-out infinite;"/>
+      </g>
+      <g opacity="0.04">
+        <!-- Figure 2 - spinning / free -->
+        <path d="M1200 680 C1210 620,1190 560,1200 500 C1210 440,1195 380,1205 330" stroke="var(--sage)" stroke-width="2" stroke-linecap="round" style="animation: riseFloat 10s ease-in-out infinite 2s;"/>
+        <path d="M1205 400 C1240 380,1260 395,1270 420" stroke="var(--sage)" stroke-width="1" stroke-linecap="round" style="animation: riseFloat 10s ease-in-out infinite 2s;"/>
+      </g>
+      <!-- Freedom circles expanding -->
+      <circle cx="700" cy="400" r="80" stroke="var(--clay)" stroke-width="0.6" fill="none" opacity="0.04" style="animation: expand 7s ease-in-out infinite;"/>
+      <circle cx="700" cy="400" r="140" stroke="var(--sage)" stroke-width="0.4" fill="none" opacity="0.03" style="animation: expand 7s ease-in-out infinite 1s;"/>
+      <circle cx="700" cy="400" r="200" stroke="var(--sand)" stroke-width="0.3" fill="none" opacity="0.02" style="animation: expand 7s ease-in-out infinite 2s;"/>
+      <!-- Scattered movement dots -->
+      <circle cx="350" cy="300" r="3" fill="var(--clay)" style="animation: pulse 3s ease-in-out infinite;"/>
+      <circle cx="1100" cy="250" r="2.5" fill="var(--sage)" style="animation: pulse 3.5s ease-in-out infinite 0.5s;"/>
+      <circle cx="500" cy="600" r="2" fill="var(--clay)" style="animation: pulse 4s ease-in-out infinite 1s;"/>
+      <circle cx="900" cy="550" r="3" fill="var(--sage)" style="animation: pulse 3s ease-in-out infinite 1.5s;"/>
+      <!-- Flow paths -->
+      <path d="M100 500 C300 450,500 520,700 480 C900 440,1100 510,1300 470" stroke="var(--sand)" stroke-width="0.5" fill="none" opacity="0.06" stroke-dasharray="8 12" style="animation: sway 12s ease-in-out infinite;"/>
+    </svg>
+  </div>
+
+  <p class="section-tag reveal">Kimler İçin?</p>
+  <h2 class="section-title reveal">Senin İçin <i>mi?</i></h2>
+  <p class="for-who-intro reveal">Özgün İfade Alanı, içsel yönünü yaşamına daha net ve canlı biçimde taşımak isteyenler için.</p>
+
+  <div class="for-who-list">
+    <div class="fw-item reveal">
+      <span class="fw-dot"></span>
+      <p>İç sesini daha net duymak ve zihinsel berraklığa yer açmak istiyorsan</p>
+    </div>
+    <div class="fw-item reveal">
+      <span class="fw-dot"></span>
+      <p>Duygu, istek ve ihtiyaçlarını anlayışla karşılamak ve ifade etmek istiyorsan</p>
+    </div>
+    <div class="fw-item reveal">
+      <span class="fw-dot"></span>
+      <p>Bedensel canlılığın ve zihinsel esnekliğinle kendine bir oyun alanı kurmak istiyorsan</p>
+    </div>
+    <div class="fw-item reveal">
+      <span class="fw-dot"></span>
+      <p>Hayat yönün ve öz benliğinle temasını güçlendirmek istiyorsan</p>
+    </div>
+    <div class="fw-item reveal" style="grid-column: 1 / -1; max-width: 420px; margin: 0 auto;">
+      <span class="fw-dot"></span>
+      <p>Hayatına özgün benliğini yansıtan bir yön vermeye hazırsan…</p>
+    </div>
+  </div>
+
+  <p class="for-who-disclaimer reveal">Bu alan; tıbbi ya da psikoterapötik destek, klinik tanı veya tedavi süreci sunmaz.</p>
+
+  <!-- Video -->
+  <div class="mini-video reveal">
+    <div class="mini-video-header">
+      <span>Ses · Nefes · Boğaz için İfade Alanı</span>
+      <h3>SESİNE YER AÇMAK</h3>
+    </div>
+    <div class="video-wrap">
+      <iframe src="https://www.youtube.com/embed/Gp-CaEAkAp0?start=5" title="Sesine Yer Aç" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- HAKKIMDA -->
+<section class="about" id="hakkimda">
+  <div class="bg-illust">
+    <svg viewBox="0 0 1440 700" fill="none" preserveAspectRatio="xMidYMid slice">
+      <g opacity="0.04">
+        <path d="M300 100 C310 180,290 260,300 340 C310 420,290 500,300 580" stroke="var(--sand)" stroke-width="2" stroke-linecap="round"/>
+        <path d="M300 200 C340 190,370 200,390 220" stroke="var(--sand)" stroke-width="1" stroke-linecap="round"/>
+        <path d="M300 200 C260 190,230 200,210 220" stroke="var(--sand)" stroke-width="1" stroke-linecap="round"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="about-inner">
+    <div class="about-visual reveal">
+      <div class="about-illust-frame" style="background:none;">
+        <img src="naz-studio.jpeg" alt="Nazlıhan" style="width:100%;height:100%;object-fit:cover;object-position:center 15%;border-radius:inherit;display:block;filter:contrast(1.05);">
+      </div>
+    </div>
+    <div class="about-text">
+      <p class="section-tag reveal">Hakkımda</p>
+      <h2 class="reveal">Ben <i>Nazlıhan.</i></h2>
+      <div class="reveal">
+        <p>Beden ve zihinde yer tutan ancak görünürlük kazanamamış ifadelerle çalışıyorum. Hareket, oyun ve ifade pratikleri aracılığıyla; kişinin kendi ritminde özgün ifadesiyle temas kurabileceği güvenli alanlar açıyorum.</p>
+        <p>Çalışmalarım; sinir sistemi farkındalığına dayalı terapötik bedensel uygulamalardan, farklı ifade pratiklerinden, kadın, genç ve topluluk temelli profesyonel deneyimlerimden beslenir. Bu alanların kesişiminde, deneyim odaklı bir ifade zemini kuruyorum.</p>
+        <p>Uyuşma, sıkışmışlık, kararsızlık, erteleme ya da zihinsel döngülerde kalma hâllerini bir problem olarak değil; sinir sisteminin koruyucu dili olarak ele alıyorum. Hareket, oyun ve ifade aracılığıyla bu dille yeni bir temas kurmaya ve kişinin kendi özgün ifadesini yeniden keşfetmesine alan açıyorum.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CALISMALAR -->
+<section class="work" id="calismalar">
+  <p class="section-tag reveal">Alanlar</p>
+  <h2 class="section-title reveal"><i>İfadenin Yolu</i></h2>
+  <div class="work-grid">
+    <div class="work-card reveal">
+      <span class="work-num">01</span>
+      <h3>Ortak Alanlar <span style="font-size:0.75rem;color:var(--sage);font-family:var(--font-sans);font-weight:400">I Online</span></h3>
+      <p>Ortak bir zaman ve çerçevede buluşuruz; ancak süreç bireyseldir. Katılımcı kendi ifade deneyiminde kalır, grup içi etkileşim yer almaz. Çalışma sonunda katılmak isteyenlerle kısa bir paylaşım alanı açılır.</p>
+      <span class="work-tag">Alana gözat</span>
+    </div>
+    <div class="work-card reveal">
+      <span class="work-num">02</span>
+      <h3>1:1 Alanlar <span style="font-size:0.75rem;color:var(--sage);font-family:var(--font-sans);font-weight:400">I Online</span></h3>
+      <p>Senin ritminde ilerleyen bireysel buluşmalar. Bedensel farkındalık, hareket ve doğaçlama ifadeler aracılığıyla ifade alanını genişletmeye ve yönünü netleştirmeye odaklanırız.</p>
+      <span class="work-tag">Ücretsiz ön görüşme al</span>
+    </div>
+    <div class="work-card reveal">
+      <span class="work-num">03</span>
+      <h3>İfade Odaları <span style="font-size:0.75rem;color:var(--sage);font-family:var(--font-sans);font-weight:400">I Online</span></h3>
+      <p>Kendi ritminde katılabileceğin, tematik ve derinleşmeye açık ifade odaları.</p>
+      <span class="work-tag">Odaları keşfet</span>
+    </div>
+    <div class="work-card reveal">
+      <span class="work-num">04</span>
+      <h3>Açık Alanlar</h3>
+      <p>Belirli temalar etrafında tasarlanmış, yüz yüze gerçekleşen derinleşme alanları. Bedensel ifade, yön ve canlılık üzerine yoğunlaşmış deneyimler.</p>
+      <span class="work-tag">Projeler için ulaş</span>
+    </div>
+  </div>
+</section>
+
+<!-- ILETISIM -->
+<section class="contact" id="iletisim">
+  <div class="contact-inner">
+    <p class="section-tag reveal">İletişim</p>
+    <h2 class="section-title reveal">Bana <i>Ulaş</i></h2>
+    <p class="contact-text reveal">Merak ettiklerin, katılım isteğin ya da sadece bir "merhaba" için bana yazabilirsin.</p>
+    <form class="contact-form reveal" onsubmit="event.preventDefault(); alert('Gönderildi! Teşekkürler.');">
+      <div class="form-group">
+        <label for="name">İsim</label>
+        <input type="text" id="name" name="name" placeholder="Adın" required>
+      </div>
+      <div class="form-group">
+        <label for="email">E-posta</label>
+        <input type="email" id="email" name="email" placeholder="E-posta adresin" required>
+      </div>
+      <div class="form-group">
+        <label for="message">Mesaj</label>
+        <textarea id="message" name="message" placeholder="Ne paylaşmak istersin?"></textarea>
+      </div>
+      <div class="form-submit">
+        <button type="submit" class="btn btn-fill">Gönder</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-brand">Özgün İfade Alanı</span>
+  <span>© 2025 Nazlıhan</span>
+</footer>
+
+<script>
+  const nav=document.getElementById('nav');
+  window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>50)});
+  const hamburger=document.getElementById('hamburger');
+  const navLinks=document.getElementById('navLinks');
+  hamburger.addEventListener('click',()=>{navLinks.classList.toggle('open')});
+  function closeNav(){navLinks.classList.remove('open')}
+  const reveals=document.querySelectorAll('.reveal');
+  const observer=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible')})},{threshold:0.15});
+  reveals.forEach(el=>observer.observe(el));
+  document.querySelectorAll('.fw-item,.work-card,.approach-card').forEach((el,i)=>{el.style.transitionDelay=`${i*0.08}s`});
+</script>
+
+</body>
+</html>
