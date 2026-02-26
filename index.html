@@ -1376,9 +1376,24 @@
   }
 
   // Gizli admin erişimi: URL'de #admin varsa
-  if(window.location.hash === '#admin') { setTimeout(openAdmin, 500); }
+  function checkHash() {
+    if(window.location.hash === '#admin') { setTimeout(openAdmin, 600); }
+  }
+  checkHash();
+  window.addEventListener('hashchange', checkHash);
+  
   // Footer'a çift tıkla admin aç
   document.querySelector('footer').addEventListener('dblclick', openAdmin);
+  
+  // Klavye kısayolu: Ctrl+Shift+A
+  document.addEventListener('keydown', function(e) {
+    if(e.ctrlKey && e.shiftKey && e.key === 'A') openAdmin();
+  });
+
+  // Footer'a gizli admin butonu ekle
+  const adminBtn = document.createElement('span');
+  adminBtn.innerHTML = ' · <a href="#admin" onclick="event.preventDefault();openAdmin()" style="color:rgba(219,203,189,0.2);text-decoration:none;font-size:0.7rem">●</a>';
+  document.querySelector('footer').appendChild(adminBtn);
 
   // ============================================
   // ADMIN PANELİ NAVİGASYON
