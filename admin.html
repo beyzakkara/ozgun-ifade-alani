@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel</title>
+<style>
+body{font-family:Arial;padding:40px;background:#f4f4f4}
+input,textarea{width:100%;margin:10px 0;padding:10px}
+button{padding:10px 20px;background:black;color:white;border:none}
+</style>
+</head>
+<body>
+
+<h2>Kontrol Paneli</h2>
+
+<label>Hero Başlık</label>
+<textarea id="heroTitle"></textarea>
+
+<label>Hakkımda Metni</label>
+<textarea id="aboutText"></textarea>
+
+<button onclick="save()">Kaydet</button>
+
+<script>
+function save(){
+  const data={
+    heroTitle:document.getElementById("heroTitle").value,
+    aboutText:document.getElementById("aboutText").value
+  }
+  localStorage.setItem("siteData",JSON.stringify(data));
+  alert("Kaydedildi! Siteyi yenile.");
+}
+</script>
+
+</body>
+</html>
